@@ -8,7 +8,9 @@ import java.util.concurrent.Executors;
 
 class ThreadHandler {
     private static ThreadHandler threadHandle = new ThreadHandler();
-    private ThreadHandler(){}
+
+    private ThreadHandler() {
+    }
 
     private Executor background = Executors.newSingleThreadExecutor();
     private Executor async = Executors.newFixedThreadPool(8);
@@ -19,46 +21,35 @@ class ThreadHandler {
         return threadHandle;
     }
 
-    <T> void handle(ThreadMode mode,final IObserver<T> observer,final T value){
-        switch (mode){
+    <T> void handle(ThreadMode mode, final BusLifecycle lifecycle, final IObserver<T> observer, final T value) {
+        Runnable call = new Runnable() {
+            @Override
+            public void run() {
+                if (lifecycle == null || !lifecycle.isDestroy()) {
+                    observer.onChanged(value);
+                }
+            }
+        };
+
+        switch (mode) {
             case POSTING:
-                observer.onChanged(value);
+                call.run();
                 break;
             case MAIN:
-                if(isMainThread()){
-                    observer.onChanged(value);
-                }else {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            observer.onChanged(value);
-                        }
-                    });
+                if (isMainThread()) {
+                    call.run();
+                } else {
+                    handler.post(call);
                 }
                 break;
             case MAIN_ORDERED:
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        observer.onChanged(value);
-                    }
-                });
+                handler.post(call);
                 break;
             case BACKGROUND:
-                background.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        observer.onChanged(value);
-                    }
-                });
+                background.execute(call);
                 break;
             case ASYNC:
-                async.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        observer.onChanged(value);
-                    }
-                });
+                async.execute(call);
                 break;
         }
     }

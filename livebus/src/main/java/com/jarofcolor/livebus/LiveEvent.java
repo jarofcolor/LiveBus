@@ -5,7 +5,6 @@ import java.util.List;
 
 public class LiveEvent<T> {
     private List<IObserver<T>> observers = new ArrayList<>();
-    private List<IObserver<T>> dirtyObservers = new ArrayList<>();
     private T value;
 
     synchronized public void setValue(T value) {
@@ -24,7 +23,7 @@ public class LiveEvent<T> {
                         continue;
                     }
 
-                    ThreadHandler.get().handle(wrapper.getMode(), observer, value);
+                    ThreadHandler.get().handle(wrapper.getMode(), lifecycle,observer, value);
                 } else
                     observer.onChanged(value);
             } catch (Exception ignored) {
@@ -37,7 +36,7 @@ public class LiveEvent<T> {
     }
 
 
-    public void observe(IObserver<T> observer) {
+    synchronized public void observe(IObserver<T> observer) {
         if (observer == null) return;
         observers.add(observer);
     }
@@ -54,7 +53,7 @@ public class LiveEvent<T> {
             @Override
             public void destroy() {
                 synchronized (LiveEvent.this){
-                    observers.remove(wrapper);
+                    removeObserver(wrapper);
                 }
             }
         };
@@ -65,10 +64,8 @@ public class LiveEvent<T> {
 
     /**
      * 删除Observer
-     *
-     * @param observer
      */
-    public void removeObserver(IObserver observer) {
+    synchronized public void removeObserver(IObserver observer) {
         if (observers != null) {
             observers.remove(observer);
         }

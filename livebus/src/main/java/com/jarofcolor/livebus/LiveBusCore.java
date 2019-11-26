@@ -5,15 +5,17 @@ import java.util.Map;
 
 class LiveBusCore {
 
-    private Map<Class,LiveEvent> eventMap = new HashMap<>();
+    private Map<Class, LiveEvent> eventMap = new HashMap<>();
 
-    LiveBusCore(){}
+    LiveBusCore() {
+    }
 
-    <T> LiveEvent<T> get(Class<T> type){
+
+    synchronized <T> LiveEvent<T> get(Class<T> type) {
         LiveEvent<T> event = eventMap.get(type);
-        if(event == null) {
+        if (event == null) {
             event = new LiveEvent<T>();
-            eventMap.put(type,event);
+            eventMap.put(type, event);
         }
         return event;
     }
