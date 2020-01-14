@@ -16,7 +16,7 @@ val liveEvent = LiveBus.get(String::class.java) //获取用于处理String类型
 ```
 2、注册事件
 ``` kotlin
-    val life = liveEvent.observe(ThreadMode.BACKGROUND,busLifecycle){
+    liveEvent.observe(ThreadMode.BACKGROUND,busLifecycle){
             //TODO
     }
 
