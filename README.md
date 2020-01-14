@@ -16,7 +16,7 @@ val liveEvent = LiveBus.get(String::class.java) //获取用于处理String类型
 ```
 2、注册事件
 ``` kotlin
-    val life = liveEvent.observeLife(ThreadMode.BACKGROUND){
+    val life = liveEvent.observe(ThreadMode.BACKGROUND,busLifecycle){
             //TODO
     }
 
@@ -33,7 +33,7 @@ val liveEvent = LiveBus.get(String::class.java) //获取用于处理String类型
 ```
 4、取消订阅
 ``` kotlin
-    life.destroy() //取消订阅
+    busLifecycle.destroy() //取消订阅
 ```
 5、获取某个事件缓存的最新值
 ``` kotlin
