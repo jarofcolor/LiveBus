@@ -14,7 +14,7 @@ class LiveBusCore {
     synchronized <T> LiveEvent<T> get(Class<T> type) {
         LiveEvent<T> event = eventMap.get(type);
         if (event == null) {
-            event = new LiveEvent<T>();
+            event = new LiveEvent<>();
             eventMap.put(type, event);
         }
         return event;

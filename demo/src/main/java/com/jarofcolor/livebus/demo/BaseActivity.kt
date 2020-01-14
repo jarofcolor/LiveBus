@@ -6,21 +6,13 @@ import com.jarofcolor.livebus.BusLifecycle
 
 @SuppressLint("Registered")
 open class BaseActivity : AppCompatActivity() {
-    private val busLifecycleList = arrayListOf<BusLifecycle>()
 
-    @Synchronized
-    fun addBusLife(busLifecycle: BusLifecycle) {
-        busLifecycleList.add(busLifecycle)
-    }
-
+    val busLifecycle = BusLifecycle()
     @Synchronized
     override fun onDestroy() {
         super.onDestroy()
-
-        busLifecycleList.forEach {
-            it.destroy()
-        }
-
-        busLifecycleList.clear()
+        busLifecycle.destroy()
     }
+
+
 }

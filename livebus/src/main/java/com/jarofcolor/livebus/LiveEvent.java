@@ -1,5 +1,7 @@
 package com.jarofcolor.livebus;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,8 @@ public class LiveEvent<T> {
                         continue;
                     }
 
-                    ThreadHandler.get().handle(wrapper.getMode(), lifecycle,observer, value);
+                    ThreadMode mode = wrapper.getMode() == null ? ThreadMode.POSTING : wrapper.getMode();
+                    ThreadHandler.get().handle(mode, lifecycle, observer, value);
                 } else
                     observer.onChanged(value);
             } catch (Exception ignored) {
@@ -37,37 +40,38 @@ public class LiveEvent<T> {
 
 
     synchronized public void observe(IObserver<T> observer) {
+        this.observe(ThreadMode.POSTING, observer);
+    }
+
+
+    public synchronized void observe(ThreadMode mode, IObserver<T> observer) {
+        this.observe(mode, null, observer);
+    }
+
+
+    public synchronized void observe(ThreadMode mode, BusLifecycle lifecycle, IObserver<T> observer) {
         if (observer == null) return;
-        observers.add(observer);
-    }
-
-
-    public void observe(ThreadMode mode, IObserver<T> observer) {
-        this.observe(new ObserverWrapper<>(mode, observer));
-    }
-
-
-    public BusLifecycle observeLife(ThreadMode mode, IObserver<T> observer) {
         final ObserverWrapper<T> wrapper = new ObserverWrapper<>(mode, observer);
-        BusLifecycle lifecycle = new BusLifecycle() {
-            @Override
-            public void destroy() {
-                synchronized (LiveEvent.this){
-                    removeObserver(wrapper);
-                }
-            }
-        };
+        if (observers.contains(wrapper)) {
+            return;
+        }
+
+        if (lifecycle != null)
+            lifecycle.add(wrapper);
         wrapper.setLifecycle(lifecycle);
-        this.observe(wrapper);
-        return lifecycle;
+        wrapper.setLiveEvent(this);
+        observers.add(wrapper);
     }
 
     /**
      * 删除Observer
      */
-    synchronized public void removeObserver(IObserver observer) {
-        if (observers != null) {
-            observers.remove(observer);
-        }
+    synchronized public void removeObserver(IObserver<T> observer) {
+        boolean removed;
+        if (observer instanceof ObserverWrapper) {
+            removed = observers.remove(observer);
+        } else
+            removed = observers.remove(new ObserverWrapper<>(null, observer));
+        Log.i("LiveBus", "Observer removed:" + removed);
     }
 }
