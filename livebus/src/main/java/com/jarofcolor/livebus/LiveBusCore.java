@@ -5,14 +5,14 @@ import java.util.Map;
 
 class LiveBusCore {
 
-    private Map<Class, LiveEvent> eventMap = new HashMap<>();
+    private final Map<Class<?>, LiveEvent<?>> eventMap = new HashMap<>();
 
     LiveBusCore() {
     }
 
-
+    @SuppressWarnings("unchecked")
     synchronized <T> LiveEvent<T> get(Class<T> type) {
-        LiveEvent<T> event = eventMap.get(type);
+        LiveEvent<T> event = (LiveEvent<T>) eventMap.get(type);
         if (event == null) {
             event = new LiveEvent<>();
             eventMap.put(type, event);

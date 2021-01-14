@@ -1,13 +1,11 @@
 package com.jarofcolor.livebus;
 
-import java.util.Objects;
-
 public class ObserverWrapper<T> implements IObserver<T> {
 
-    private ThreadMode mode;
+    private final ThreadMode mode;
     private BusLifecycle lifecycle;
-    private IObserver<T> observer;
-    private LiveEvent liveEvent;
+    private final IObserver<T> observer;
+    private LiveEvent<T> liveEvent;
 
     public ObserverWrapper(ThreadMode mode, IObserver<T> observer) {
         this.mode = mode == null ? ThreadMode.POSTING : mode;
@@ -35,7 +33,7 @@ public class ObserverWrapper<T> implements IObserver<T> {
         this.liveEvent = liveEvent;
     }
 
-    public LiveEvent getLiveEvent() {
+    public LiveEvent<T> getLiveEvent() {
         return liveEvent;
     }
 

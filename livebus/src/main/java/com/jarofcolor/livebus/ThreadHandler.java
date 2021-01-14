@@ -7,15 +7,15 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 class ThreadHandler {
-    private static ThreadHandler threadHandle = new ThreadHandler();
+    private final static ThreadHandler threadHandle = new ThreadHandler();
 
     private ThreadHandler() {
     }
 
-    private Executor background = Executors.newSingleThreadExecutor();
-    private Executor async = Executors.newFixedThreadPool(8);
+    private final Executor background = Executors.newSingleThreadExecutor();
+    private final Executor async = Executors.newCachedThreadPool();
 
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     static ThreadHandler get() {
         return threadHandle;

@@ -6,20 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LiveEvent<T> {
-    private List<IObserver<T>> observers = new ArrayList<>();
+    private final List<IObserver<T>> observers = new ArrayList<>();
     private T value;
 
     synchronized public void setValue(T value) {
         this.value = value;
 
-        if (observers == null) {
-            return;
-        }
-
         for (IObserver<T> observer : observers) {
             try {
                 if (observer instanceof ObserverWrapper) {
-                    ObserverWrapper wrapper = (ObserverWrapper) observer;
+                    ObserverWrapper<T> wrapper = (ObserverWrapper<T>) observer;
                     BusLifecycle lifecycle = wrapper.getLifecycle();
                     if (lifecycle != null && lifecycle.isDestroy()) {
                         continue;
@@ -38,16 +34,13 @@ public class LiveEvent<T> {
         return value;
     }
 
-
-    synchronized public void observe(IObserver<T> observer) {
+    public synchronized void observe(IObserver<T> observer) {
         this.observe(ThreadMode.POSTING, observer);
     }
-
 
     public synchronized void observe(ThreadMode mode, IObserver<T> observer) {
         this.observe(mode, null, observer);
     }
-
 
     public synchronized void observe(ThreadMode mode, BusLifecycle lifecycle, IObserver<T> observer) {
         if (observer == null) return;
