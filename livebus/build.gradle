@@ -31,4 +31,4 @@ dependencies {
 }
 
 
-apply from: 'upload.gradle'
+apply from: '../gradle/maven-upload.gradle'

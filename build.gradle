@@ -28,3 +28,15 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task makeReadme(group: "readme") {
+    def readmeFile = new File(projectDir, "README.md")
+    def readmeText = readmeFile.getText("utf-8")
+    def replaceText = readmeText
+    replaceText = replaceText.replaceAll("'com.jarofcolor.livebus:livebus:\\S+'", "'com.jarofcolor.livebus:livebus:${findProject("livebus").POM_VERSION}'")
+    if (replaceText != readmeText) {
+        BufferedWriter writer = readmeFile.newWriter("utf-8")
+        writer.write(replaceText)
+        writer.close()
+    }
+}
