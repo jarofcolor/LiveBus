@@ -7,7 +7,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.jarofcolor.livebus.demo"
+        applicationId "real.droid.livebus.demo"
         minSdkVersion 15
         targetSdkVersion 29
         versionCode 1
