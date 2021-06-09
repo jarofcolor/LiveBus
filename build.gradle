@@ -31,7 +31,7 @@ task makeReadme(group: "readme") {
     def readmeFile = new File(projectDir, "README.md")
     def readmeText = readmeFile.getText("utf-8")
     def replaceText = readmeText
-    replaceText = replaceText.replaceAll("'real.droid:livebus:\\S+'", "'real.droid:livebus:${findProject("livebus").POM_VERSION}'")
+    replaceText = replaceText.replaceAll("'com.github.jarofcolor:LiveBus:\\S+'", "'com.github.jarofcolor:LiveBus:${findProject("livebus").POM_VERSION}'")
     if (replaceText != readmeText) {
         BufferedWriter writer = readmeFile.newWriter("utf-8")
         writer.write(replaceText)
