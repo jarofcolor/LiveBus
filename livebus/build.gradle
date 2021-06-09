@@ -31,4 +31,4 @@ dependencies {
 }
 
 
-apply from: '../gradle/maven-upload.gradle'
+apply plugin: 'com.github.dcendents.android-maven'
